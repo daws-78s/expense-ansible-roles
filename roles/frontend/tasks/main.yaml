@@ -1,0 +1,39 @@
+- name: install nginx server
+  ansible.builtin.dnf:
+    name: nginx
+    state: latest
+
+- name: start and enable nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: delete default website
+  ansible.builtin.file:
+    path: /usr/share/nginx/html
+    state: absent
+
+- name: create html directory
+  ansible.builtin.file:
+    path: /usr/share/nginx/html
+    state: directory
+
+- name: download and extract frontend code
+  ansible.builtin.unarchive:
+    src: https://expense-builds.s3.us-east-1.amazonaws.com/expense-frontend-v2.zip
+    dest: /usr/share/nginx/html
+    remote_src: yes
+
+# if there is change in configuration only, then you need to restart nginx
+- name: copy backend conf
+  ansible.builtin.template:
+    src: expense.conf.j2
+    dest: /etc/nginx/default.d/expense.conf
+  notify:
+  - restart nginx
+
+# - name: restart nginx
+#   ansible.builtin.service:
+#     name: nginx
+#     state: restarted
