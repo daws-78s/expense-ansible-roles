@@ -28,10 +28,10 @@
       zone: " {{ zone }}"
       record: " {{ item }}.{{ zone }}"
       type: A
-      value: "{{ item.private_ip_address }}"
+      value: "{{ item.instances.private_ip_address }}"
       overwrite: true
       ttl: 1
-    loop: "{{ ec2_instances_info.results.instances }}"
+    loop: "{{ ec2_instances_info.results }}"
 
   
  
